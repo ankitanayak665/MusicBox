@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CALCULATOR</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.2/css/all.min.css"
+        integrity="sha512-1sCRPdkRXhBV2PBLUdRb4tMg1w2YPf37qatUFeS7zlBy7jJI8Lf4VHwWfZZfpXtYSLy85pkm9GaYVYMfw5BC1A=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="style.css" />
+</head>
+
+<body>
+    <p id="demo"></p>
+    <div class="main_div">
+        <div class="music_container">
+            <h2 id="title">LOTUS LANE</h2>
+            <h3 id="artist">The Loyalist</h3>
+            <div class="img_container">
+                <img src="images/music-1.jfif" alt="" />
+            </div>
+            <audio src="musics/music-1.mp3" id='myaudio'></audio>
+
+            <!-- progress bar-------------------->
+            <div class="progressbar_container" id="progress_container">
+                <div class="progress_duration_meter">
+                    <div id="current_time"></div>
+                    <div id="duration"></div>
+                </div>
+                <div class="progress_div" id="progress_div">
+                <div class="progress" id="progress"></div>
+                <!-- <input type="range" value="0" id="progress"> -->
+                </div>
+            </div>
+
+
+            <!----------controls---------------->
+            <div class="music_controls">
+                <i class="" id="" title=""></i>
+
+                <i class="fa-solid fa-backward" id="Back" title="back"></i>
+                <i class="fa-solid fa-caret-left" id="Prev" title="Previous"></i>
+                <i class="fa-solid fa-play main_button" id="Play" title="Play"></i>
+                <i class="fa-solid fa-caret-right" id="Next" title="Next"></i>
+                <i class="fa-solid fa-forward" id="Forward" title="forward"></i>
+                <i class="fa-solid fa-volume-high" id="volume" title="Volume"></i>
+
+
+                <!-- <button onclick="enableMute()" type="button">Mute sound</button>
+<button onclick="disableMute()" type="button">Enable sound</button>
+<button onclick="checkMute()" type="button">Check muted status</button><br>  -->
+
+            </div>
+        </div>
+    </div>
+    <script>
+        const music = document.querySelector("audio");
+        const img = document.querySelector("img");
+        const play = document.getElementById("Play");
+        const artist = document.getElementById("artist");
+        const title = document.getElementById("title");
+        const prev = document.getElementById("Prev");
+        const next = document.getElementById("Next");
+        let progress = document.getElementById("progress");
+        let total_duration = document.getElementById("duration");
+        let current_time = document.getElementById("current_time");
+        let volume = document.getElementById("volume");
+        let forward = document.getElementById("Forward");
+        let backward = document.getElementById("Back");
+        let progress_div = document.getElementById("progress_div");
+
+        music.onloadedmetadata = function () {
+            //  console.log(music)
+            duration = music.duration
+            let min_duration = Math.floor(duration / 60);
+            let sec_duration = Math.floor(duration % 60);
+
+            let tot_duration = `${min_duration}:${sec_duration}`;
+            if (duration) {
+                total_duration.textContent = ` ${tot_duration}`;
+            }
+
+            let tot_currentTime = `0:0`;
+            current_time.textContent = `${tot_currentTime}`;
+        }
+
+
+
+        const songs = [{
+            name: "music-1",
+            title: "Lotus Lane",
+            artist: "Loyalist",
+        },
+        {
+            name: "music-2",
+            title: "Sappheiros",
+            artist: "Aurora",
+        },
+        {
+            name: "music-3",
+            title: "Walking Firiri",
+            artist: "Gorkhali Takma",
+        },
+
+        ]
+
+
+        let isPlaying = false;
+        let isVolume = true;
+
+        //for play-------------------------------->
+        const playMusic = () => {
+            isPlaying = true;
+            music.play();
+            play.classList.replace("fa-play", "fa-pause")
+            // console.log(img.classList);
+            img.classList.add("anime");
+           
+
+
+        };
+        //for pause----------------------->
+
+        const pauseMusic = () => {
+            isPlaying = false;
+            music.pause();
+            play.classList.replace("fa-pause", "fa-play")
+            // console.log(img.classList);
+            img.classList.remove("anime");
+
+        };
+
+
+        play.addEventListener('click', () => {
+            // if(isPlaying){
+            //     pauseMusic();
+            // }else{
+            //     playMusic();
+            // }
+
+            isPlaying ? pauseMusic() : playMusic();
+        });
+
+        //for mute------------------------->
+
+        volume.addEventListener('click', () => {
+            if (isVolume) {
+                music.muted = true;
+                volume.classList.replace("fa-volume-high", "fa-volume-off")
+                isVolume = false;
+                console.log(play.classList)
+            } else {
+                music.muted = false;
+                volume.classList.replace("fa-volume-off", "fa-volume-high")
+                isVolume = true;
+            }
+        })
+
+        //Forward music -------------------------------->
+        forward.addEventListener('click', () => {
+            x = music.currentTime + 10;
+            if (x < music.duration) {
+                music.currentTime = x;
+                playMusic();
+            } else {
+                music.currentTime = music.duration
+            }
+
+
+        })
+
+        //Backward music -------------------------------->
+        backward.addEventListener('click', () => {
+            x = music.currentTime - 10;
+            if (x > 0) {
+                music.currentTime = x;
+                playMusic();
+            } else {
+                music.currentTime = 0
+            }
+
+
+        })
+
+
+        const loadSong = (songs) => {
+            title.textContent = songs.title;
+            artist.textContent = songs.artist;
+            music.src = "musics/" + songs.name + ".mp3";
+            img.src = "images/" + songs.name + ".jfif";
+            progress.style.width= `0%`;
+            //progress.value = 0;
+
+            if (isPlaying) {
+                playMusic();
+            }
+
+        };
+
+        songIndex = 0;
+
+        //loadSong(songs[2]);
+
+
+
+        const nextSong = () => {
+            if (songIndex == songs.length - 1) {
+                songIndex = 0;
+            } else {
+                songIndex++;
+
+            }
+
+            loadSong(songs[songIndex]);
+
+
+        };
+
+
+        const prevSong = () => {
+            if (songIndex == 0) {
+                songIndex = songs.length - 1;
+            } else {
+                songIndex--;
+
+            }
+
+            loadSong(songs[songIndex]);
+
+        };
+        
+        // progress js work
+        music.addEventListener('timeupdate', (event) => {
+            const { currentTime, duration } = event.srcElement;
+            // console.log(event);
+
+
+            let progress_time = (currentTime / duration) * 100;
+            progress.style.width = `${progress_time}%`;
+            //progress.value = progress_time;
+
+
+            // click Progresss------------------>
+            progress_div.onclick =function(e){
+                music.currentTime = ((e.offsetX/progress_div.offsetWidth)* music.duration);
+            }
+
+          
+
+            //music duration update
+            let min_duration = Math.floor(duration / 60);
+            let sec_duration = Math.floor(duration % 60);
+
+            let tot_duration = `${min_duration}:${sec_duration}`;
+            if (duration) {
+                total_duration.textContent = ` ${tot_duration}`;
+            }
+
+            let min_currentTime = Math.floor(currentTime / 60);
+            let sec_currentTime = Math.floor(currentTime % 60);
+
+            let tot_currentTime = `${min_currentTime}:${sec_currentTime}`;
+            if (currentTime) {
+                current_time.textContent = ` ${tot_currentTime}`;
+            }
+        });
+
+        music.addEventListener('ended', (event) => {
+            nextSong();
+        });
+
+
+        next.addEventListener("click", nextSong);
+        prev.addEventListener("click", prevSong);
+
+        
+
+    </script>
+</body>
+
+</html>
